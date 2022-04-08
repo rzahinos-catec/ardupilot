@@ -831,7 +831,7 @@ MAV_RESULT GCS_MAVLINK_Plane::handle_command_int_guided_slew_commands(const mavl
 
      case MAV_CMD_GUIDED_CHANGE_HEADING: {
 
-        hal.console->printf("The OFFBOARD_GUIDED macro is" + OFFBOARD_GUIDED);
+        hal.console->printf("\n MAV_CMD_GUIDED_CHANGE_HEADING received \n");
 
         // command is only valid in guided mode
         if (plane.control_mode != &plane.mode_guided) {
@@ -874,8 +874,7 @@ MAV_RESULT GCS_MAVLINK_Plane::handle_command_int_guided_slew_commands(const mavl
 
   }
   // anything else ...
-  hal.console->printf("The OFFBOARD_GUIDED macro is" + OFFBOARD_GUIDED);
-  return MAV_RESULT_FAILED;
+  return MAV_RESULT_UNSUPPORTED;
 
 }
 

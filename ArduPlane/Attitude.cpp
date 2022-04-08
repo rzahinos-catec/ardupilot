@@ -574,7 +574,7 @@ void Plane::calc_throttle()
     float commanded_throttle = TECS_controller.get_throttle_demand();
 
     // Received an external msg that guides throttle in the last 3 seconds?
-    if (control_mode->is_guided_mode() &&
+    if ( (control_mode->is_guided_mode()||(control_mode == &mode_fbwb)) &&
             plane.guided_state.last_forced_throttle_ms > 0 &&
             millis() - plane.guided_state.last_forced_throttle_ms < 3000) {
         commanded_throttle = plane.guided_state.forced_throttle;
@@ -699,7 +699,8 @@ void Plane::calc_nav_pitch()
     int32_t commanded_pitch = TECS_controller.get_pitch_demand();
 
     // Received an external msg that guides roll in the last 3 seconds?
-    if (control_mode->is_guided_mode() &&
+    
+    if ((control_mode->is_guided_mode()||(control_mode == &mode_fbwb)) &&
             plane.guided_state.last_forced_rpy_ms.y > 0 &&
             millis() - plane.guided_state.last_forced_rpy_ms.y < 3000) {
         commanded_pitch = plane.guided_state.forced_rpy_cd.y;
@@ -717,13 +718,13 @@ void Plane::calc_nav_roll()
     int32_t commanded_roll = nav_controller->nav_roll_cd();
 
     // Received an external msg that guides roll in the last 3 seconds?
-    if (control_mode->is_guided_mode() &&
+    if ( (control_mode->is_guided_mode()||(control_mode == &mode_fbwb)) &&
             plane.guided_state.last_forced_rpy_ms.x > 0 &&
             millis() - plane.guided_state.last_forced_rpy_ms.x < 3000) {
         commanded_roll = plane.guided_state.forced_rpy_cd.x;
 #if OFFBOARD_GUIDED == ENABLED
     // guided_state.target_heading is radians at this point between -pi and pi ( defaults to -4 )
-    } else if ((control_mode == &mode_guided) && (guided_state.target_heading_type != GUIDED_HEADING_NONE) ) {
+    } else if ( (control_mode == &mode_guided) && (guided_state.target_heading_type != GUIDED_HEADING_NONE) ) {
         uint32_t tnow = AP_HAL::millis();
         float delta = (tnow - guided_state.target_heading_time_ms) * 1e-3f;
         guided_state.target_heading_time_ms = tnow;
