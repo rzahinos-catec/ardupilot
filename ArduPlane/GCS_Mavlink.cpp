@@ -831,6 +831,8 @@ MAV_RESULT GCS_MAVLINK_Plane::handle_command_int_guided_slew_commands(const mavl
 
      case MAV_CMD_GUIDED_CHANGE_HEADING: {
 
+        hal.console->printf("The OFFBOARD_GUIDED macro is" + OFFBOARD_GUIDED);
+
         // command is only valid in guided mode
         if (plane.control_mode != &plane.mode_guided) {
             return MAV_RESULT_FAILED;
@@ -872,7 +874,8 @@ MAV_RESULT GCS_MAVLINK_Plane::handle_command_int_guided_slew_commands(const mavl
 
   }
   // anything else ...
-  return MAV_RESULT_UNSUPPORTED;
+  hal.console->printf("The OFFBOARD_GUIDED macro is" + OFFBOARD_GUIDED);
+  return MAV_RESULT_FAILED;
 
 }
 
@@ -1169,7 +1172,7 @@ void GCS_MAVLINK_Plane::handleMessage(const mavlink_message_t &msg)
         // in e.g., RTL, CICLE. Specifying a single mode for companion
         // computer control is more safe (even more so when using
         // FENCE_ACTION = 4 for geofence failures).
-        if (plane.control_mode != &plane.mode_guided) { // don't screw up failsafes
+        if (!((plane.control_mode == &plane.mode_guided) || (plane.control_mode == &plane.mode_fbwb))){ // don't screw up failsafes
             break; 
         }
 
